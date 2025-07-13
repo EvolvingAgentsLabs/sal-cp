@@ -2,7 +2,7 @@
 
 **(Self-Aware LLM Communication Protocol)**
 
-An experimental, rich context communication protocol for collaborative AI agents.
+The TCP/IP of agent networks - a standardized protocol for context-aware communication between LLMunix instances.
 
 <p align="center">
   <a href="https://github.com/EvolvingAgentsLabs/sal-cp/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue.svg" alt="License"></a>
@@ -22,151 +22,189 @@ An experimental, rich context communication protocol for collaborative AI agents
 
 ## The Problem (Our Research Hypothesis)
 
-Current AI agent communication suffers from fundamental limitations:
-- **Context Loss**: Critical context disappears between agent interactions
-- **Rigid Protocols**: Fixed message structures can't adapt to task complexity
-- **No Self-Awareness**: Agents can't communicate their internal states or constraints
-- **Poor Collaboration**: Agents work in isolation without shared understanding
-- **Static Capabilities**: No way to dynamically discover and adapt to agent capabilities
+In distributed networks of LLMunix agents, we need standardized communication that goes beyond simple text:
+- **Cognitive State Sharing**: Agents need to communicate their current thinking process
+- **Resource Awareness**: Agents must share their computational load and constraints
+- **Context Preservation**: Critical task context must flow between agent handoffs
+- **Capability Negotiation**: Agents need to understand each other's strengths
+- **Coordination Metadata**: Timing, urgency, and dependencies must be explicit
 
-Our research explores whether agents can develop **self-aware communication patterns** that enable richer, more effective collaboration.
+SAL-CP defines a standardized message format that all LLMunix instances use to create meaningful, context-aware agent networks.
 
-## The Experiment: Context-Rich Agent Communication
+## The Experiment: Standardized Agent-to-Agent Messaging
 
-SAL-CP enables agents to communicate not just *what* they're doing, but *how* they're thinking, what they know, and what they need from collaborators.
+SAL-CP is not a single agent but a **message format specification** that all LLMunix instances implement for inter-agent communication.
 
-### Experimental Usage Pattern
+### The SAL-CP Message Standard
 
-```python
-from sal_cp import Agent, Message, Context, Capability
-
-# 1. Create self-aware agent
-agent = Agent(
-    id="ResearchAnalyst-v2",
-    capabilities=[
-        Capability("research", confidence=0.95, context_required="academic_papers"),
-        Capability("summarization", confidence=0.88, context_required="structured_data")
-    ],
-    internal_state={
-        "current_focus": "AI research trends",
-        "available_resources": ["arxiv_access", "paper_database"],
-        "processing_capacity": "moderate"
-    }
-)
-
-# 2. Rich context message
-message = Message(
-    sender=agent,
-    content="I need help analyzing 50 research papers on transformer architectures",
-    context=Context(
-        task_complexity="high",
-        domain="academic_research", 
-        deadline="24_hours",
-        quality_requirements="peer_review_level"
-    ),
-    metacommunication={
-        "confidence_in_request": 0.92,
-        "preferred_collaboration_style": "parallel_processing",
-        "available_for_followup": True,
-        "resource_constraints": ["time_limited", "compute_intensive"]
-    }
-)
-
-# 3. Self-aware collaboration
-response = agent.collaborate(message)
-print(f"Collaboration strategy: {response.strategy}")
-print(f"Agent internal state: {response.agent_state}")
-```
-
-## Key Research Features
-
-### 🧠 Self-Aware Communication
-
-Agents communicate their internal states and capabilities:
-
-```python
-class SelfAwareMessage:
-    def __init__(self, content, sender_state):
-        self.content = content
-        self.sender_state = {
-            "current_capabilities": sender_state.active_capabilities,
-            "resource_usage": sender_state.compute_load,
-            "confidence_levels": sender_state.task_confidence,
-            "collaboration_preferences": sender_state.preferred_partners,
-            "context_awareness": sender_state.understanding_depth
-        }
-        self.adaptation_hints = {
-            "response_style": "technical_detailed",  # or "summary", "creative"
-            "urgency_level": "moderate",
-            "collaboration_mode": "peer_review"  # or "mentor", "student"
-        }
-```
-
-### 📊 Dynamic Context Modeling
-
-Rich context representation that evolves during collaboration:
+Every message between LLMunix agents follows this structure:
 
 ```json
 {
-  "context_id": "research-collaboration-001",
-  "domain": "ai_research",
-  "task_graph": {
-    "root_task": "literature_review_transformers",
-    "subtasks": [
-      {"id": "paper_discovery", "assigned_to": "SearchAgent", "status": "completed"},
-      {"id": "content_analysis", "assigned_to": "AnalysisAgent", "status": "in_progress"},
-      {"id": "trend_identification", "assigned_to": null, "status": "pending"}
+  "protocol": "SAL-CP/v1",
+  "message_id": "msg_123456",
+  "from": "content-writer-agent",
+  "to": "market-analyst-agent",
+  "timestamp": "2024-06-26T10:30:00Z",
+  
+  "payload": {
+    "content": "Please provide competitor analysis for EcoFlow Pro",
+    "task_id": "report_001",
+    "priority": "high"
+  },
+  
+  "context": {
+    "cognitive_state": "DRAFTING_SECTION_3",
+    "confidence_level": 0.85,
+    "resource_usage": {
+      "token_buffer": "80%",
+      "memory_load": "moderate",
+      "time_remaining": "2_hours"
+    }
+  },
+  
+  "requirements": {
+    "response_format": "structured_data",
+    "max_response_time": "30_minutes",
+    "required_context_keys": [
+      "permanent:product_strategy_2024",
+      "workspace:competitor_list"
     ]
   },
-  "shared_knowledge": {
-    "discovered_papers": 127,
-    "key_concepts": ["attention_mechanisms", "scaling_laws", "emergent_capabilities"],
-    "research_gaps": ["efficiency_optimization", "interpretability_methods"]
-  },
-  "collaboration_history": [
-    {
-      "timestamp": "2024-06-25T10:30:00Z",
-      "interaction": "AnalysisAgent requested clarification on evaluation metrics",
-      "outcome": "shared_understanding_improved",
-      "context_evolution": "added_evaluation_criteria_context"
-    }
-  ]
+  
+  "metadata": {
+    "thread_id": "project_ecoflow_report",
+    "parent_message": "msg_123455",
+    "collaboration_pattern": "research_support"
+  }
 }
 ```
 
-### 🤝 Adaptive Collaboration Patterns
+### Implementation in LLMunix
 
-Protocol adapts communication style based on agent capabilities and task requirements:
+The `send_message` tool in each LLMunix instance constructs SAL-CP compliant messages:
 
 ```python
-# Collaboration pattern discovery
-class CollaborationPatterns:
-    @staticmethod
-    def peer_review_pattern(agents, task):
-        """Multiple expert agents review each other's work"""
-        return {
-            "communication_style": "critical_analysis",
-            "feedback_loops": "multi_round",
-            "consensus_mechanism": "expertise_weighted_voting"
+# In GEMINI.md virtual tools
+def send_message(recipient, content, context=None):
+    """Send SAL-CP formatted message to another agent"""
+    message = {
+        "protocol": "SAL-CP/v1",
+        "from": self.agent_id,
+        "to": recipient,
+        "payload": {"content": content},
+        "context": {
+            "cognitive_state": self.current_state,
+            "confidence_level": self.task_confidence,
+            "resource_usage": self.get_resource_metrics()
+        },
+        "metadata": {
+            "thread_id": self.current_thread,
+            "collaboration_pattern": self.detect_pattern()
         }
-    
-    @staticmethod
-    def mentor_student_pattern(mentor_agent, student_agent, task):
-        """Expert agent guides learning agent"""
-        return {
-            "communication_style": "educational_scaffolding",
-            "feedback_loops": "guided_discovery",
-            "knowledge_transfer": "progressive_complexity"
-        }
-    
-    @staticmethod
-    def parallel_processing_pattern(agents, task):
-        """Agents work independently then synthesize"""
-        return {
-            "communication_style": "progress_updates",
-            "coordination_mechanism": "milestone_synchronization",
-            "synthesis_strategy": "multi_perspective_integration"
-        }
+    }
+    return self.message_bus.send(message)
+
+## Key Research Features
+
+### 🧠 Cognitive State Fields
+
+SAL-CP defines standard fields for agents to share their thinking process:
+
+```yaml
+cognitive_states:
+  - PLANNING: "Developing approach to task"
+  - RESEARCHING: "Gathering information"
+  - ANALYZING: "Processing and evaluating data"
+  - CREATING: "Generating new content"
+  - REVIEWING: "Checking and refining work"
+  - BLOCKED: "Waiting for dependencies"
+  - ERROR_RECOVERY: "Handling unexpected issues"
+
+resource_metrics:
+  token_buffer_usage: "Percentage of context window used"
+  memory_pressure: "Available vs used memory state"
+  compute_intensity: "Current processing load"
+  time_constraints: "Deadline awareness"
+
+confidence_indicators:
+  task_understanding: 0.0-1.0
+  capability_match: 0.0-1.0
+  success_probability: 0.0-1.0
+  uncertainty_areas: ["specific unknowns"]
+```
+
+### 📊 Context Preservation Across Handoffs
+
+SAL-CP ensures critical context flows between agents:
+
+```json
+{
+  "context_transfer": {
+    "task_history": [
+      {
+        "agent": "router",
+        "action": "classified_as_legal_task",
+        "timestamp": "10:30:00"
+      },
+      {
+        "agent": "marketplace",
+        "action": "auction_completed",
+        "winner": "legal_expert",
+        "timestamp": "10:30:45"
+      }
+    ],
+    "shared_memory_keys": [
+      "workspace:project_requirements",
+      "permanent:client_preferences",
+      "workspace:draft_sections_completed"
+    ],
+    "task_dependencies": {
+      "upstream": ["data_gathering_complete"],
+      "downstream": ["final_review_needed"],
+      "parallel": ["graphics_generation"]
+    },
+    "quality_requirements": {
+      "accuracy": "legal_grade",
+      "format": "formal_report",
+      "citations": "bluebook_standard"
+    }
+  }
+}
+```
+
+### 🤝 Message Types and Patterns
+
+SAL-CP defines standard message types for common agent interactions:
+
+```yaml
+message_types:
+  # Task delegation
+  TASK_REQUEST: "Router → Worker: Please handle this task"
+  TASK_ACCEPTANCE: "Worker → Router: I can handle this"
+  TASK_REJECTION: "Worker → Router: Outside my capabilities"
+  
+  # Marketplace interactions  
+  REQUEST_FOR_BID: "Marketplace → All: Who can do this?"
+  BID_SUBMISSION: "Worker → Marketplace: I bid $X"
+  BID_AWARD: "Marketplace → Worker: You won, proceed"
+  
+  # Collaboration
+  CONTEXT_QUERY: "Agent A → Agent B: Need info about X"
+  CONTEXT_SHARE: "Agent B → Agent A: Here's what I know"
+  PROGRESS_UPDATE: "Worker → Observer: 50% complete"
+  
+  # Coordination
+  DEPENDENCY_WAIT: "Agent → Network: Blocked on task Y"
+  DEPENDENCY_READY: "Agent → Waiting: Task Y complete"
+  HANDOFF: "Agent A → Agent B: Taking over from here"
+
+collaboration_patterns:
+  sequential: "A completes, then hands to B"
+  parallel: "A and B work simultaneously"
+  hierarchical: "A delegates subtasks to B, C, D"
+  peer_review: "A and B check each other's work"
+  ensemble: "A, B, C vote on best approach"
 ```
 
 ### 🔄 Context Evolution Tracking
@@ -193,83 +231,100 @@ class ContextEvolution:
         self.shared_understanding = outcome.new_shared_understanding
 ```
 
-## Research Architecture
+## Protocol Architecture
 
-### Protocol Components
+### SAL-CP Specification Structure
 
 ```
 sal_cp/
-├── core/
-│   ├── agent.py              # Self-aware agent base class
-│   ├── message.py            # Rich message structures
-│   ├── context.py            # Dynamic context modeling
-│   └── protocol.py           # Communication protocol rules
-├── collaboration/
-│   ├── patterns.py           # Collaboration pattern library
-│   ├── adaptation.py         # Dynamic adaptation mechanisms
-│   └── evolution.py          # Context evolution tracking
-├── capabilities/
-│   ├── discovery.py          # Dynamic capability detection
-│   ├── matching.py           # Capability-task matching
-│   └── enhancement.py        # Collaborative capability building
-├── metacommunication/
-│   ├── awareness.py          # Self-awareness mechanisms
-│   ├── reflection.py         # Agent self-reflection tools
-│   └── learning.py           # Communication pattern learning
-├── examples/
-│   ├── research_collaboration/  # Academic research workflow
-│   ├── creative_writing/        # Multi-agent story creation
-│   └── problem_solving/         # Complex problem decomposition
-└── research/
-    ├── experiments/          # Communication pattern studies
-    ├── analysis/            # Protocol effectiveness research
-    └── simulations/         # Multi-agent interaction modeling
+├── specification/
+│   ├── v1.0/
+│   │   ├── message_format.json    # Core message schema
+│   │   ├── cognitive_states.yaml  # Standard state definitions
+│   │   ├── message_types.yaml     # Defined message types
+│   │   └── validation_rules.json  # Protocol compliance rules
+│   └── extensions/
+│       ├── marketplace_ext.yaml    # Auction-specific fields
+│       ├── router_ext.yaml         # Routing metadata
+│       └── canvas_ext.yaml         # Monitoring fields
+├── implementation/
+│   ├── python/
+│   │   ├── sal_cp.py              # Reference implementation
+│   │   ├── message_builder.py     # Message construction
+│   │   └── validator.py           # Protocol validation
+│   ├── javascript/
+│   │   └── sal-cp.js              # JS implementation
+│   └── go/
+│       └── salcp.go               # Go implementation
+├── integration/
+│   ├── llmunix_adapter.py         # LLMunix integration
+│   ├── message_bus_bridge.py      # Message bus connector
+│   └── legacy_wrapper.py          # Backward compatibility
+├── tools/
+│   ├── message_inspector.py       # Debug and analysis
+│   ├── protocol_analyzer.py       # Performance metrics
+│   └── compatibility_checker.py   # Version checking
+└── examples/
+    ├── basic_messaging/           # Simple agent communication
+    ├── complex_handoffs/          # Multi-step workflows
+    └── network_patterns/          # Advanced patterns
 ```
 
-## Experimental Installation & Setup
+## Integration with LLMunix
 
-**Note**: This is research software. Use in controlled environments only.
+SAL-CP is built into every LLMunix instance's messaging tools:
 
 ```bash
-# Clone the research repository
-git clone https://github.com/EvolvingAgentsLabs/sal-cp.git
-cd sal-cp
+# In your LLMunix GEMINI.md, the send_message tool automatically uses SAL-CP
 
-# Install in development mode
-pip install -e .
-
-# Install optional dependencies for advanced features
-pip install -e ".[research,visualization]"
+# Example: Content Writer agent sending to Research agent
+send_message(
+    to="research-analyst",
+    content="Need competitor pricing data for Q4 report",
+    context={
+        "cognitive_state": "DRAFTING",
+        "urgency": "high",
+        "required_format": "table"
+    }
+)
 ```
 
-### Basic Experimental Usage
+### Message Bus Configuration
 
-```python
-from sal_cp import SelfAwareAgent, CollaborativeWorkspace
+Configure your LLMunix instances to use SAL-CP:
 
-# Create self-aware agents
-researcher = SelfAwareAgent(
-    id="research_specialist",
-    domain_expertise=["ai_research", "data_analysis"],
-    communication_style="academic_precise"
-)
+```yaml
+# workspace/config/sal_cp.yaml
+protocol:
+  version: "1.0"
+  strict_mode: true  # Enforce protocol compliance
+  
+message_bus:
+  type: "filesystem"  # or "redis", "rabbitmq"
+  path: "workspace/messages/"
+  
+agent_discovery:
+  method: "broadcast"  # or "registry"
+  heartbeat_interval: 30  # seconds
+  
+context_preservation:
+  max_history_depth: 10
+  shared_memory_sync: true
+```
 
-writer = SelfAwareAgent(
-    id="content_creator", 
-    domain_expertise=["technical_writing", "knowledge_synthesis"],
-    communication_style="clear_explanatory"
-)
+### Monitoring SAL-CP Messages
 
-# Create collaborative workspace
-workspace = CollaborativeWorkspace(agents=[researcher, writer])
+Use the protocol analyzer to inspect agent communications:
 
-# Execute collaborative task
-task = "Create a comprehensive report on recent advances in large language models"
-result = workspace.collaborate(task, enable_self_awareness=True)
+```bash
+# Monitor all SAL-CP messages in real-time
+python -m sal_cp.tools.monitor --path workspace/messages/
 
-print(f"Collaboration pattern used: {result.pattern}")
-print(f"Context evolution steps: {len(result.context_evolution)}")
-print(f"Final output quality: {result.quality_metrics}")
+# Analyze communication patterns
+python -m sal_cp.tools.analyze --report patterns
+
+# Validate protocol compliance
+python -m sal_cp.tools.validate --strict
 ```
 
 ## Research Examples
@@ -351,24 +406,26 @@ def adaptive_collaboration_demo():
 
 ## Research Roadmap
 
-### Phase 1: Foundation (Current)
-- [x] Basic self-aware communication framework
-- [x] Rich context modeling system
-- [x] Collaboration pattern library
-- [ ] Metacommunication mechanisms
-- [ ] Context evolution tracking
+### Phase 1: Protocol Definition (Current)
+- [x] Core message format specification
+- [x] Cognitive state standardization
+- [x] Message type catalog
+- [ ] Protocol validation rules
+- [ ] Reference implementations
 
-### Phase 2: Advanced Features
-- [ ] Machine learning for pattern discovery
-- [ ] Real-time adaptation mechanisms
-- [ ] Cross-domain communication optimization
-- [ ] Emergent collaboration detection
+### Phase 2: Network Integration
+- [ ] Native LLMunix integration
+- [ ] Message bus abstractions
+- [ ] Cross-network bridging
+- [ ] Protocol version negotiation
+- [ ] Backward compatibility layer
 
-### Phase 3: Ecosystem
-- [ ] Integration with existing agent frameworks
-- [ ] Cross-language protocol implementations
-- [ ] Standardized self-awareness APIs
-- [ ] Community pattern library
+### Phase 3: Advanced Features
+- [ ] Encrypted agent communication
+- [ ] Message priority queuing
+- [ ] Multicast patterns
+- [ ] Protocol extensions framework
+- [ ] Performance optimizations
 
 ## Research Metrics & Analysis
 
